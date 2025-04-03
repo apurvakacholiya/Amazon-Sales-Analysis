@@ -8,8 +8,8 @@ This project aims to analyze Amazon sales data to derive meaningful insights abo
 
 🏗️ Features
 
-Data cleaning and preprocessing **fjfjf**
-Exploratory data analysis (EDA)
+Data cleaning and preprocessing <br />
+Exploratory data analysis (EDA) <br />
 Sales trends visualization
 Customer behavior analysis
 Product performance evaluation
