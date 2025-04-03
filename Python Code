@@ -1,0 +1,128 @@
+# <u> AMAZON SALES DATA ANALYSIS </u>
+
+## DATA COLLECTION
+
+import pandas as pd
+
+# Load the dataset to inspect its contents
+file_path = '/mnt/data/amazon-fashion - YT.csv'
+data = pd.read_csv(file_path)
+
+# Display the first few rows of the dataset and general information
+data_info = data.info()
+data_head = data.head()
+
+data_info, data_head
+
+
+DATA CLEANING
+
+import pandas as pd
+
+# Load the dataset
+file_path = '/path/to/amazon-fashion.csv'
+data = pd.read_csv(file_path, encoding='latin1')
+
+# Drop unnecessary columns
+columns_to_drop = [col for col in data.columns if "Unnamed" in col]
+data_cleaned = data.drop(columns=columns_to_drop)
+
+# Clean and convert 'discount_percentage'
+data_cleaned['discount_percentage'] = (
+    data_cleaned['discount_percentage']
+    .str.replace('%', '', regex=False)
+    .astype(float, errors='ignore')
+)
+
+
+# Handle missing values
+essential_columns = ['product_name', 'sales_price', 'rating']
+data_cleaned = data_cleaned.dropna(subset=essential_columns)
+
+# Convert numeric columns
+numeric_columns = ['sales_price', 'rating', 'no_of_reviews', 'discount_percentage']
+for col in numeric_columns:
+    data_cleaned[col] = pd.to_numeric(data_cleaned[col], errors='coerce')
+
+# Reset index after cleaning
+data_cleaned.reset_index(drop=True, inplace=True)
+
+## DATA TRANSFORMATION
+
+# Add a 'price_category' column based on sales_price
+bins = [0, 500, 1500, 5000, float('inf')]
+labels = ['Low', 'Affordable', 'Mid-Range', 'High-End']
+data_cleaned['price_category'] = pd.cut(data_cleaned['sales_price'], bins=bins, labels=labels)
+
+# Encode 'amazon_prime__y_or_n' as binary
+data_cleaned['amazon_prime__binary'] = data_cleaned['amazon_prime__y_or_n'].map({'Y': 1, 'N': 0})
+
+
+## EXPLORATORY DATA ANALYSIS
+
+# Summary of numerical columns
+print(data_cleaned.describe())
+
+# Count of products by category
+print(data_cleaned['Category'].value_counts())
+
+# Correlation matrix
+correlation_matrix = data_cleaned.corr()
+print(correlation_matrix)
+
+## DATA VISUALISATION
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+plt.figure(figsize=(8, 6))
+sns.histplot(data_cleaned['sales_price'], bins=50, kde=True, color='blue')
+plt.title('Distribution of Sales Price')
+plt.xlabel('Sales Price')
+plt.ylabel('Frequency')
+plt.show()
+
+plt.figure(figsize=(10, 6))
+data_cleaned['Category'].value_counts().plot(kind='bar', color='orange')
+plt.title('Product Count by Category')
+plt.xlabel('Category')
+plt.ylabel('Count')
+plt.xticks(rotation=45)
+plt.show()
+
+plt.figure(figsize=(8, 6))
+sns.scatterplot(data=data_cleaned, x='sales_price', y='rating', hue='price_category', palette='viridis')
+plt.title('Sales Price vs Rating')
+plt.xlabel('Sales Price')
+plt.ylabel('Rating')
+plt.legend(title='Price Category')
+plt.show()
+
+plt.figure(figsize=(10, 8))
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f")
+plt.title('Correlation Heatmap')
+plt.show()
+
+
+# Boxplot of Sales Price by Price Category
+plt.figure(figsize=(8, 6))
+sns.boxplot(data=data_cleaned, x='price_category', y='sales_price', palette='pastel')
+plt.title('Boxplot of Sales Price by Price Category')
+plt.xlabel('Price Category')
+plt.ylabel('Sales Price')
+plt.show()
+
+# Distribution of Ratings
+plt.figure(figsize=(8, 6))
+sns.histplot(data_cleaned['rating'], bins=20, kde=True, color='purple')
+plt.title('Distribution of Ratings')
+plt.xlabel('Rating')
+plt.ylabel('Frequency')
+plt.show()
+
+# Pie Chart of Amazon Prime vs Non-Prime Products
+plt.figure(figsize=(6, 6))
+data_cleaned['amazon_prime__y_or_n'].value_counts().plot(kind='pie', autopct='%1.1f%%', colors=['skyblue', 'lightcoral'])
+plt.title('Amazon Prime vs Non-Prime Products')
+plt.ylabel('')
+plt.show()
