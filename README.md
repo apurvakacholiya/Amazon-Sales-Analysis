@@ -58,8 +58,6 @@ Impact of discounts and promotions on sales performance
 
 📈 Visualization
 
-Visualizations include:
-
 Sales trends over time
 
 Category-wise sales performance
